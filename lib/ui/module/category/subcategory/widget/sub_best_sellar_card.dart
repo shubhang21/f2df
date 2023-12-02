@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import 'package:mcsofttech/constants/Constant.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/models/home/AllProduct.dart';
 import 'package:mcsofttech/theme/my_theme.dart';
 
@@ -24,7 +25,7 @@ class BestSellarCard extends BaseStateLessWidget {
 
   final AllProduct recommdedProduct;
   final userActionController = Get.put(AddUserActionController());
-  final controller = Get.put(ProductDetailController());
+  final controller = Get.put(CartController());
   final appPreferences = Get.find<AppPreferences>();
 
   @override
@@ -100,7 +101,9 @@ class BestSellarCard extends BaseStateLessWidget {
                       InkWell(
                         onTap: () {
                           if (appPreferences.isLoggedIn) {
-                            controller.addToCart(recommdedProduct);
+                            controller.addItems(
+                                recommdedProduct.p_id.toString(),
+                                recommdedProduct.quantity);
                           } else {
                             LoginPage.start();
                           }
@@ -117,7 +120,8 @@ class BestSellarCard extends BaseStateLessWidget {
                               recommdedProduct.userId.toString(),
                               recommdedProduct.img1,
                               "",
-                              "1");
+                              "1",
+                              "");
                         },
                         child: Card(
                           elevation: 3,

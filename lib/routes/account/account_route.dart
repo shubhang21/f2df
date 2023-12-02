@@ -1,4 +1,5 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:mcsofttech/ui/module/profile/profile_list.dart';
 import 'package:mcsofttech/ui/module/profile/profile_page.dart';
 
 class AccountRoutes {
@@ -6,5 +7,6 @@ class AccountRoutes {
 
   static List<GetPage> get routes => [
         GetPage(name: EditProfile.routeName, page: () => EditProfile()),
+        GetPage(name: ProfileOptions.routeName, page: () => ProfileOptions()),
       ];
 }

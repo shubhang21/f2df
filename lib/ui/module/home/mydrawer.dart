@@ -5,6 +5,7 @@ import 'package:mcsofttech/controllers/meridhukaan/meri_dukaan_controller.dart';
 import 'package:mcsofttech/theme/my_theme.dart';
 import 'package:mcsofttech/ui/module/login/login_page.dart';
 import 'package:mcsofttech/ui/module/meridukaan/my_product.dart';
+import 'package:mcsofttech/ui/module/profile/profile_list.dart';
 import 'package:mcsofttech/ui/module/profile/profile_page.dart';
 import 'package:share/share.dart';
 import '../../../data/preferences/AppPreferences.dart';
@@ -29,7 +30,7 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Drawer(
-        width: Get.width/1.2,
+        width: Get.width / 1.2,
         backgroundColor: MyColors.kColorLightWhite,
         child: SingleChildScrollView(
           child: Column(
@@ -144,7 +145,7 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
         ),
         onTap: () {
           if (appPreferences.isLoggedIn) {
-            EditProfile.start(fromTab: "Home");
+            ProfileOptions.start(fromTab: "Home");
           } else {
             LoginPage.start();
           }
@@ -517,8 +518,7 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
           ],
         ),
         onTap: () {
-          NavigationWebView.start(
-              "faqs".tr, "http://f2df.com/about-us/faq");
+          NavigationWebView.start("faqs".tr, "http://f2df.com/about-us/faq");
         },
       ),
     );

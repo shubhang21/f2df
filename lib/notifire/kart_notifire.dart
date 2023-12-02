@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/models/home/AllProduct.dart';
 
 class NotificationNotifer extends GetxController {
@@ -6,6 +7,8 @@ class NotificationNotifer extends GetxController {
 
   add(AllProduct notificationCounter) {
     productList.add(notificationCounter);
+    Get.find<CartController>().addItems(
+        notificationCounter.p_id.toString(), notificationCounter.quantity);
     update();
   }
 

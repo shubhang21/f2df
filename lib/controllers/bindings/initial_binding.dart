@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 
 import 'package:mcsofttech/data/preferences/shared_preferences.dart';
 import 'package:mcsofttech/utils/common_util.dart';
@@ -21,6 +22,7 @@ class InitialBindings extends Bindings {
       Get.put<SharedConfig>(SharedConfig(), permanent: true);
       Get.put<NotificationNotifer>(NotificationNotifer(), permanent: true);
       Get.put<Common>(Common(), permanent: true);
+      Get.put(CartController());
     } catch (e) {
       print("Error in InitialBindings");
     }

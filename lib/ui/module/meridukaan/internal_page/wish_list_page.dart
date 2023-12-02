@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/ui/base/page.dart';
 import 'package:mcsofttech/ui/dialog/loader.dart';
 import 'package:mcsofttech/ui/module/cart/widget/wish_list_card.dart';
@@ -36,7 +37,6 @@ class WishListPage extends AppPageWithAppBar {
 
   final myProducts = [].obs;
 
-  final controller = Get.put(ProductDetailController());
   final controllerProduct = Get.put(ProductController());
   final appPreferences = Get.find<AppPreferences>();
   final wishController = Get.put(TotalVisitorController());
@@ -105,9 +105,7 @@ class WishListPage extends AppPageWithAppBar {
                   left: 0,
                   right: 0,
                   child: KartCounter(
-                    count: Provider.of<CartNotifier>(Get.context!)
-                        .productList
-                        .length,
+                    count: Get.find<CartController>().cartCount.value,
                   ),
                 )
               ],

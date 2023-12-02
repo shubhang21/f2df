@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mcsofttech/constants/Constant.dart';
 import 'package:mcsofttech/controllers/addandsell/add_and_sell_controller.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/controllers/meridhukaan/add_user_action_controller.dart';
 import 'package:mcsofttech/controllers/product/product_Detail_controller.dart';
 import 'package:mcsofttech/data/preferences/AppPreferences.dart';
@@ -56,7 +57,7 @@ class ProductDetail extends AppPageWithAppBar {
     });
   }
 
-  final controller = Get.put(ProductDetailController());
+  final controller = Get.put(CartController());
   final userActionController = Get.put(AddUserActionController());
   final controllerProduct = Get.put(ProductController());
   final appPreferences = Get.find<AppPreferences>();
@@ -127,9 +128,7 @@ class ProductDetail extends AppPageWithAppBar {
                   left: 0,
                   right: 0,
                   child: Obx(() => KartCounter(
-                        count: Provider.of<CartNotifier>(Get.context!)
-                            .productList
-                            .length,
+                        count: Get.find<CartController>().cartCount.value,
                       )),
                 )
               ],
@@ -255,7 +254,6 @@ class ProductDetail extends AppPageWithAppBar {
       ),
     );
   }
-
 
   Widget get productTypeAndDetailCard {
     return Card(
@@ -484,7 +482,8 @@ class ProductDetail extends AppPageWithAppBar {
                       allProduct.userId.toString(),
                       allProduct.img1,
                       "",
-                      "1");
+                      "1",
+                      "");
                 },
                 child: Icon(
                   Icons.favorite,
@@ -836,7 +835,8 @@ class ProductDetail extends AppPageWithAppBar {
                         allProduct.userId.toString(),
                         allProduct.img1,
                         "",
-                        "1");
+                        "1",
+                        "");
                   },
                   color: MyColors.themeColor,
                   textColor: Colors.white,
@@ -871,7 +871,8 @@ class ProductDetail extends AppPageWithAppBar {
                         allProduct.userId.toString(),
                         allProduct.img1,
                         "",
-                        "1");
+                        "1",
+                        "");
                   },
                   child: const Icon(
                     Icons.call,
@@ -904,8 +905,7 @@ class ProductDetail extends AppPageWithAppBar {
           InkWell(
               onTap: () {
                 if (quantity.value >= 1) {
-                  Provider.of<CartNotifier>(Get.context!, listen: false)
-                      .removeFromCart(allProduct.p_id);
+                  controller.decreaseQuantity(allProduct.p_id.toString(), 1);
                   quantity.value -= 1;
                 }
               },
@@ -937,6 +937,7 @@ class ProductDetail extends AppPageWithAppBar {
           InkWell(
               onTap: () {
                 quantity.value += 1;
+                controller.increaseQuantity(allProduct.p_id.toString(), 1);
               },
               child: Text(
                 "+",
@@ -1072,7 +1073,8 @@ class ProductDetail extends AppPageWithAppBar {
                         allProduct.userId.toString(),
                         allProduct.img1,
                         "",
-                        "1");
+                        "1",
+                        "");
                   })),
                   const SizedBox(
                     width: 10,
@@ -1149,7 +1151,12 @@ class ProductDetail extends AppPageWithAppBar {
             "Pay Full Payment",
             () async => {
                   wishController
-                      .createOrderId(allProduct.productFee * quantity.value)
+                      .createOrderId(allProduct.productFee * quantity.value, [
+                    {
+                      "productId": allProduct.p_id,
+                      "quantity": allProduct.quantity
+                    }
+                  ])
                 },
             borderRadius: 10.0),
       ),
@@ -1208,7 +1215,7 @@ class ProductDetail extends AppPageWithAppBar {
               children: [
                 Expanded(
                     child: PrimaryElevatedBtn("ADD TO CART", () {
-                  Get.delete<ProductDetailController>();
+                  Get.delete<CartController>();
                   CartListPage.start("CHAT NOW");
                 })),
                 const SizedBox(
@@ -1234,7 +1241,7 @@ class ProductDetail extends AppPageWithAppBar {
           height: screenHeight / 15,
           child: PrimaryElevatedBtn(buttonStyle: checkOutButtonStyle, "Buy now",
               () {
-            Get.delete<ProductDetailController>();
+            Get.delete<CartController>();
             CartListPage.start("My Cart");
           }, borderRadius: 1.0),
         ),
@@ -1245,7 +1252,10 @@ class ProductDetail extends AppPageWithAppBar {
               "Add to cart",
               () async => {
                     if (appPreferences.isLoggedIn)
-                      {controller.addToCart(allProduct)}
+                      {
+                        controller.addItems(
+                            allProduct.p_id.toString(), allProduct.quantity)
+                      }
                     else
                       {LoginPage.start()}
                   },
@@ -1299,7 +1309,8 @@ class ProductDetail extends AppPageWithAppBar {
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    Provider.of<CartNotifier>(Get.context!, listen: false).clearCart();
+    // Provider.of<CartNotifier>(Get.context!, listen: false).clearCart();
+    //TODO
     wishController.saveTransaction(
         0,
         0,

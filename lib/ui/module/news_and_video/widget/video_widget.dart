@@ -17,7 +17,7 @@ class VideoCard extends BaseStateLessWidget {
       width: screenWidget,
       child: InkWell(
         onTap: () {
-          VideoNewsDetail.start("NATKA1RF6qE","");
+          VideoNewsDetail.start("NATKA1RF6qE", "");
         },
         child: Card(
           elevation: 3,
@@ -30,7 +30,7 @@ class VideoCard extends BaseStateLessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  VideoNewsDetail.start("iLnmTe5Q2Qw","");
+                  VideoNewsDetail.start("iLnmTe5Q2Qw", "");
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -43,7 +43,7 @@ class VideoCard extends BaseStateLessWidget {
                           fit: BoxFit.fill,
                           placeholder: "assets/png/placeholder.png",
                           image:
-                              "${Constant.baseUrl}/img/product/noaImg2.png")),
+                              "${Constant.baseImageUrl}/img/product/noaImg2.png")),
                 ),
               ),
               Expanded(

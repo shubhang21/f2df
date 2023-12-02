@@ -1,3 +1,42 @@
+class CartListResponse {
+  int? status;
+  String? message;
+  CartList? data;
+
+  CartListResponse({this.data, this.message, this.status});
+
+  factory CartListResponse.fromJson(Map<String, dynamic> json) =>
+      CartListResponse(
+          data: CartList.fromJson(json["data"]),
+          message: json["message"],
+          status: json["status"]);
+}
+
+class CartList {
+  List<Equiry>? cartItems;
+  int? totalPrice;
+
+  CartList({
+    this.cartItems,
+    this.totalPrice,
+  });
+
+  factory CartList.fromJson(Map<String, dynamic> json) => CartList(
+        cartItems: json["cartItems"] == null
+            ? []
+            : List<Equiry>.from(
+                json["cartItems"]!.map((x) => Equiry.fromJson(x))),
+        totalPrice: json["totalPrice"].toInt(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "cartItems": cartItems == null
+            ? []
+            : List<dynamic>.from(cartItems!.map((x) => x.toJson())),
+        "totalPrice": totalPrice,
+      };
+}
+
 class Equiry {
   String productImg;
   String email;
@@ -15,6 +54,7 @@ class Equiry {
   int user_id;
   int qunatity;
   int actualPrice;
+  String uuid;
 
   Equiry(
       {required this.productImg,
@@ -32,7 +72,8 @@ class Equiry {
       required this.userName,
       required this.user_id,
       required this.qunatity,
-      required this.actualPrice});
+      required this.actualPrice,
+      required this.uuid});
 
   factory Equiry.fromJson(Map<String, dynamic> json) {
     return Equiry(
@@ -42,16 +83,17 @@ class Equiry {
         mobile: json['mobile'] ?? "",
         price: json['price'] ?? 0,
         productName: json['productName'] ?? "",
-        product_id: json['product_id'] ?? 0,
+        product_id: json['productId'] ?? 0,
         product_user_id: json['product_user_id'] ?? 0,
-        status: json['status'] ?? 200,
+        status: json['status'] ?? "200",
         subCategory: json['subCategory'] ?? "",
         type: json['type'] ?? "",
         updateDate: json['updateDate'] ?? "",
         userName: json['userName'] ?? "",
         user_id: json['user_id'] ?? 0,
         qunatity: json['qunatity'] ?? 1,
-        actualPrice: json['actualPrice'] ?? 0);
+        actualPrice: json['actualPrice'] ?? 0,
+        uuid: json['cartUUid'] ?? "");
   }
 
   Map<String, dynamic> toJson() {
@@ -72,6 +114,7 @@ class Equiry {
     data['user_id'] = user_id;
     data['qunatity'] = qunatity;
     data['actualPrice'] = actualPrice;
+    data['cartUUid'] = uuid;
     return data;
   }
 }

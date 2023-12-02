@@ -2,6 +2,7 @@ import 'package:filter_list/filter_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mcsofttech/controllers/base_getx_controller.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/data/network/apiservices/category_api_services.dart';
 import 'package:mcsofttech/data/network/apiservices/product_api_services.dart';
 import 'package:mcsofttech/models/category/CategoryCatData.dart';
@@ -48,8 +49,9 @@ class SplashController extends BaseController {
     if (response.status == 200) {
       if (response.equiryList.isNotEmpty) {
         for (int i = 0; i < response.equiryList.length; i++) {
-          Provider.of<CartNotifier>(Get.context!, listen: false)
-              .addCart(response.equiryList[i]);
+          Get.find<CartController>().addItems(
+              response.equiryList[i].id.toString(),
+              response.equiryList[i].qunatity);
         }
       }
     }

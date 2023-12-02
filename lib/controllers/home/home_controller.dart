@@ -60,13 +60,11 @@ class HomeController extends BaseController {
       allProductList = response.allProducts!;
     }
     pageNo.value = 1;
-    if(!appPreferences.isShow){
+    if (!appPreferences.isShow) {
       Future.delayed(const Duration(milliseconds: 500), () {
         showOfferSheet(Get.context!, Get.height, Get.width);
       });
-
     }
-
   }
 
   void callProductListFromHomeApi({page, paramValue}) async {
@@ -81,7 +79,9 @@ class HomeController extends BaseController {
       pageNo.value += 1;
       if (response.products != null && response.products!.isNotEmpty) {
         allProductList.addAll(response.products!);
-        response.products?.forEach((element) {DynamicLinksApi.createReferralLink(element.p_id.toString());});
+        response.products?.forEach((element) {
+          DynamicLinksApi.createReferralLink(element.p_id.toString());
+        });
       }
     }
   }
@@ -92,11 +92,10 @@ class HomeController extends BaseController {
       child: InkWell(
         onTap: () {
           Get.back();
-         // Navigator.pop(Get.context!);
+          // Navigator.pop(Get.context!);
           Future.delayed(const Duration(milliseconds: 500), () {
-            showPriceSheet(Get.context!, Get.height, Get.width,name);
+            showPriceSheet(Get.context!, Get.height, Get.width, name);
           });
-
         },
         child: Card(
           elevation: 3,
@@ -191,7 +190,7 @@ class HomeController extends BaseController {
         context: context,
         builder: (BuildContext c) {
           return SizedBox(
-            height: screenHeight/1.5,
+            height: screenHeight / 1.5,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: Column(
@@ -200,7 +199,6 @@ class HomeController extends BaseController {
                   const SizedBox(
                     height: 10,
                   ),
-
                   enquiaryOfferForm(screenWidget),
                   const SizedBox(
                     height: 10,
@@ -216,16 +214,22 @@ class HomeController extends BaseController {
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     child: Column(
                       children: [
-                        card("BEE KEEPING",
-                            "${Constant.baseImageUrl}/img/BEE_KEEPING.png", "1000"),
-                        card("CASH CROPS",
-                            "${Constant.baseImageUrl}/img/CASH_CROPS.png", "5000"),
+                        card(
+                            "BEE KEEPING",
+                            "${Constant.baseImageUrl}/img/BEE_KEEPING.png",
+                            "1000"),
+                        card(
+                            "CASH CROPS",
+                            "${Constant.baseImageUrl}/img/CASH_CROPS.png",
+                            "5000"),
                         card(
                             "DAIRY PRODUCTS",
                             "${Constant.baseImageUrl}/img/dairy_Products.png",
                             "250"),
-                        card("FOOD GRAINS & EDIBLE OILS",
-                            "${Constant.baseImageUrl}/img/FOOD_GRAINS.png", "3000")
+                        card(
+                            "FOOD GRAINS & EDIBLE OILS",
+                            "${Constant.baseImageUrl}/img/FOOD_GRAINS.png",
+                            "3000")
                       ],
                     ),
                   ),
@@ -236,7 +240,8 @@ class HomeController extends BaseController {
         });
   }
 
-  void showPriceSheet(context, double screenHeight, double screenWidget,String productNameText) {
+  void showPriceSheet(context, double screenHeight, double screenWidget,
+      String productNameText) {
     final productNameController = TextEditingController();
     final nameController = TextEditingController();
     final mobileController = TextEditingController();
@@ -244,7 +249,7 @@ class HomeController extends BaseController {
     final quantityController = TextEditingController();
     final offerPriceController = TextEditingController();
     final expectedDateController = TextEditingController();
-    productNameController.text=productNameText;
+    productNameController.text = productNameText;
     showModalBottomSheet(
         isScrollControlled: true,
         shape: const RoundedRectangleBorder(
@@ -253,71 +258,82 @@ class HomeController extends BaseController {
             side: BorderSide(color: Colors.white)),
         context: context,
         builder: (BuildContext c) {
-         return Padding(padding: MediaQuery.of(context).viewInsets,child: Container(child: Wrap(
-          children: <Widget>[const SizedBox(
-            height: 10,
-          ),
-            Padding(padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),child: enquiaryForm(screenWidget),),
-            const SizedBox(
-              height: 10,
-            ),
-            const Divider(
-              height: 1,
-              color: MyColors.themeColor,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  productName(productNameController, "Product Name"),
-                  productName(nameController, "Name"),
-                  productName(mobileController, "Phone Number"),
-                  productName(locationController, "Location"),
-                  productName(quantityController, "Quantity"),
-                  productName(offerPriceController, "Offer Price"),
-                  productName(expectedDateController,
-                      "Expected Date DD-MM-YYYY"),
-                ],
-              ),
-            ), Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20,top: 10,left: 10,right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                        child: PrimaryElevatedBtn("SUBMIT", () {
-                          addRequirementApi(
-                              "App",
-                              productNameController.text.toString(),
-                              nameController.text.toString(),
-                              mobileController.text.toString(),
-                              locationController.text.toString(),
-                              quantityController.text.toString(),
-                              offerPriceController.text.toString(),
-                              expectedDateController.text.toString());
-                          Get.back();
-                          //Navigator.of(Get.context!).pop();
-                          appPreferences.savePopUp(true);
-                        })),
-                    const SizedBox(
-                      width: 10,
+          return Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: Container(
+                  child: Wrap(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 10, bottom: 10),
+                    child: enquiaryForm(screenWidget),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: MyColors.themeColor,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        productName(productNameController, "Product Name"),
+                        productName(nameController, "Name"),
+                        productName(mobileController, "Phone Number"),
+                        productName(locationController, "Location"),
+                        productName(quantityController, "Quantity"),
+                        productName(offerPriceController, "Offer Price"),
+                        productName(
+                            expectedDateController, "Expected Date DD-MM-YYYY"),
+                      ],
                     ),
-                    Expanded(
-                        child: OutLineElevatedBtn("CANCEL", () {
-                          Get.back();
-                          //Navigator.of(Get.context!).pop();
-                        })),
-                  ],
-                ),
-              ),
-            ),],)));
-       
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 20, top: 10, left: 10, right: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                              child: PrimaryElevatedBtn("SUBMIT", () {
+                            addRequirementApi(
+                                "App",
+                                productNameController.text.toString(),
+                                nameController.text.toString(),
+                                mobileController.text.toString(),
+                                locationController.text.toString(),
+                                quantityController.text.toString(),
+                                offerPriceController.text.toString(),
+                                expectedDateController.text.toString());
+                            Get.back();
+                            //Navigator.of(Get.context!).pop();
+                            appPreferences.savePopUp(true);
+                          })),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                              child: OutLineElevatedBtn("CANCEL", () {
+                            Get.back();
+                            //Navigator.of(Get.context!).pop();
+                          })),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )));
         });
   }
 
@@ -336,6 +352,7 @@ class HomeController extends BaseController {
       ),
     );
   }
+
   Widget enquiaryOfferForm(double screenWidget) {
     return Text("urgent_requirement".tr,
         textAlign: TextAlign.center,
@@ -345,14 +362,17 @@ class HomeController extends BaseController {
             fontWeight: FontWeight.bold,
             fontFamily: 'Montserrat'));
   }
+
   Widget enquiaryForm(double screenWidget) {
-    return Center(child: Text("ENQUIRY FORM",
-        textAlign: TextAlign.center,
-        style: TextStyles.headingTexStyle(
-            color: MyColors.themeColor,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Montserrat')),);
+    return Center(
+      child: Text("ENQUIRY FORM",
+          textAlign: TextAlign.center,
+          style: TextStyles.headingTexStyle(
+              color: MyColors.themeColor,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Montserrat')),
+    );
   }
 
   void addRequirementApi(
@@ -419,8 +439,8 @@ class HomeController extends BaseController {
               child: SizedBox(
                 width: 200,
                 height: 45,
-                child: PrimaryElevatedBtn("Back to home",
-                    () async => {Get.back()},
+                child: PrimaryElevatedBtn(
+                    "Back to home", () async => {Get.back()},
                     borderRadius: 10.0),
               ),
             )

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/models/meridukaan/userdashboard/Equiry.dart';
-import 'package:mcsofttech/notifire/cart_notifire.dart';
-import 'package:provider/provider.dart';
 import '../../../constants/Constant.dart';
 import '../../../controllers/meridhukaan/total_visitor_controller.dart';
-import '../../../controllers/product/product_Detail_controller.dart';
 import '../../../utils/palette.dart';
 import '../../base/base_satateless_widget.dart';
 import '../../commonwidget/text_style.dart';
@@ -15,8 +13,7 @@ class KartCard extends BaseStateLessWidget {
   final wishController = Get.find<TotalVisitorController>();
 
   KartCard({Key? key, required this.product}) : super(key: key);
-  final controller = Get.find<ProductDetailController>();
-  final quantity = 1.obs;
+  final controller = Get.find<CartController>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +21,6 @@ class KartCard extends BaseStateLessWidget {
   }
 
   Widget createCartListItem() {
-    quantity.value = product.qunatity;
     return Card(
       elevation: 5,
       child: Container(
@@ -65,15 +61,15 @@ class KartCard extends BaseStateLessWidget {
       padding: const EdgeInsets.only(left: 1, right: 10, top: 10),
       child: Row(
         children: [
-          Obx(() => Text("\u{20B9} ${product.actualPrice * quantity.value}",
+          Text("\u{20B9} ${product.actualPrice * product.qunatity}",
               style: TextStyles.headingTexStyle(
                   fontSize: 12,
                   color: Palette.appColor,
-                  fontFamily: "assets/font/Oswald-Regular.ttf"))),
+                  fontFamily: "assets/font/Oswald-Regular.ttf")),
           const SizedBox(
             width: 5,
           ),
-          Text("\u{20B9} 0",
+          Text("\u{20B9} ${product.price}",
               style: TextStyles.headingTexStyle(
                   fontSize: 12,
                   decoration: TextDecoration.lineThrough,
@@ -101,20 +97,7 @@ class KartCard extends BaseStateLessWidget {
           ),
           InkWell(
               onTap: () {
-                if (quantity.value <= 1) {
-                  Provider.of<CartNotifier>(Get.context!, listen: false)
-                      .removeFromCart(product.product_id);
-                  controller.removeCart(product);
-                  wishController.deleteAction(
-                      "Cart", product.product_id, product.id);
-                  controller.removeCart(product);
-                  return;
-                }
-                quantity.value -= 1;
-                wishController.updateCart(
-                    (product.actualPrice * quantity.value),
-                    product.id,
-                    quantity.value.toString());
+                controller.decreaseQuantity(product.product_id.toString(), 1);
               },
               child: const Icon(
                 Icons.delete_outline_rounded,
@@ -131,11 +114,11 @@ class KartCard extends BaseStateLessWidget {
                 borderRadius: BorderRadius.circular(3), color: Colors.white),
             child: SizedBox(
               width: 40,
-              child: Obx(() => Text(
-                    quantity.value.toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyles.headingTexStyle(color: Palette.appColor),
-                  )),
+              child: Text(
+                product.qunatity.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyles.headingTexStyle(color: Palette.appColor),
+              ),
             ),
           ),
           const SizedBox(
@@ -143,11 +126,7 @@ class KartCard extends BaseStateLessWidget {
           ),
           InkWell(
               onTap: () {
-                quantity.value += 1;
-                wishController.updateCart(
-                    (product.actualPrice * quantity.value),
-                    product.id,
-                    quantity.value.toString());
+                controller.increaseQuantity(product.product_id.toString(), 1);
               },
               child: Text(
                 "+",
@@ -166,13 +145,7 @@ class KartCard extends BaseStateLessWidget {
   Widget get delete {
     return InkWell(
       onTap: () {
-        controller.removeCart(product);
-        wishController.deleteAction("Cart", product.product_id, product.id);
-        controller.removeCart(product);
-        wishController.updateCart(
-            (product.actualPrice * quantity.value),
-            product.id,
-            "0");
+        controller.deleteItem(product.uuid);
       },
       child: Container(
         width: 130,
@@ -201,10 +174,7 @@ class KartCard extends BaseStateLessWidget {
           width: 30,
           child: FloatingActionButton(
             onPressed: () {
-              quantity.value += 1;
-              Provider.of<CartNotifier>(Get.context!, listen: false)
-                  .addCart(product);
-              controller.getTotalPrice;
+              controller.increaseQuantity(product.product_id.toString(), 1);
             },
             backgroundColor: Colors.white,
             child: const Icon(
@@ -219,11 +189,11 @@ class KartCard extends BaseStateLessWidget {
         Container(
           decoration: BoxDecoration(
               border: Border.all(width: 1), color: Palette.colorWhite),
-          child: Obx(() => Padding(
-                padding: const EdgeInsets.all(5),
-                child: Text(quantity.value.toString(),
-                    style: const TextStyle(fontSize: 15.0)),
-              )),
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Text(product.qunatity.toString(),
+                style: const TextStyle(fontSize: 15.0)),
+          ),
         ),
         const SizedBox(
           width: 20,
@@ -233,11 +203,7 @@ class KartCard extends BaseStateLessWidget {
           width: 30,
           child: FloatingActionButton(
             onPressed: () {
-              if (quantity.value <= 1) {
-                Provider.of<CartNotifier>(Get.context!, listen: false)
-                    .removeFromCart(product.product_id);
-              }
-              quantity.value -= 1;
+              controller.decreaseQuantity(product.product_id.toString(), 1);
             },
             backgroundColor: Colors.white,
             child: const Icon(Icons.remove, color: Colors.black),
@@ -286,7 +252,7 @@ class KartCard extends BaseStateLessWidget {
       padding: const EdgeInsets.all(10),
       child: InkWell(
         onTap: () {
-          controller.removeCart(product);
+          controller.deleteItem(product.uuid);
         },
         child: const Icon(Icons.delete, color: Colors.red),
       ),

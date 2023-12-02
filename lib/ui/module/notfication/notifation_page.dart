@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/ui/base/page.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -91,9 +92,7 @@ class NotificationPage extends AppPageWithAppBar {
                   left: 0,
                   right: 0,
                   child: KartCounter(
-                    count: Provider.of<CartNotifier>(Get.context!)
-                        .productList
-                        .length,
+                    count: Get.find<CartController>().cartCount.value,
                   ),
                 )
               ],

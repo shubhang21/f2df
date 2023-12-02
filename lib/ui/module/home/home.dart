@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/controllers/home/home_controller.dart';
 import 'package:mcsofttech/ui/module/addsellrent/rent_sell.dart';
 import 'package:mcsofttech/ui/module/cart/cart_list_page.dart';
@@ -40,9 +41,10 @@ class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   static Future<bool?> start<bool>(int openPage) {
-    currentPage=openPage;
-    return navigateOffAll<bool>(routeName,arguments: {"openPage":openPage});
+    currentPage = openPage;
+    return navigateOffAll<bool>(routeName, arguments: {"openPage": openPage});
   }
+
   @override
   State<StatefulWidget> createState() {
     return _HomeState();
@@ -72,16 +74,16 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    currentTab=Home.currentPage;
+    currentTab = Home.currentPage;
     //currentScreen=const MeriDukaanTabTabs();
-    if(currentTab==1){
-      currentScreen=const MeriDukaanTabTabs();
+    if (currentTab == 1) {
+      currentScreen = const MeriDukaanTabTabs();
     }
-    if(currentTab==2){
-      currentScreen=const ExportTabs();
+    if (currentTab == 2) {
+      currentScreen = const ExportTabs();
     }
-    if(currentTab==3){
-      currentScreen= MoreTab();
+    if (currentTab == 3) {
+      currentScreen = MoreTab();
     }
     getAddress();
   }
@@ -93,7 +95,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget get body {
-   // Analytics.sendCurrentScreen(AnalyticsConstants.screenHome);
+    // Analytics.sendCurrentScreen(AnalyticsConstants.screenHome);
     return Scaffold(
         drawer: const DrawerDashboard(),
         appBar: appBar(context),
@@ -486,8 +488,7 @@ class _HomeState extends State<Home> {
                   left: 0,
                   right: 0,
                   child: KartCounter(
-                    count:
-                        Provider.of<CartNotifier>(context).productList.length,
+                    count: Get.find<CartController>().cartCount.value,
                   ),
                 )
               ],
@@ -512,7 +513,6 @@ class _HomeState extends State<Home> {
       throw Exception('Error');
     }
     return await Geolocator.getCurrentPosition();
-
   }
 
   Future<void> getAddressFromLatLong(Position position) async {

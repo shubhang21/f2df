@@ -7,6 +7,7 @@ import 'package:mcsofttech/controllers/meridhukaan/user_dashboard_controller.dar
 import 'package:mcsofttech/models/home/AllProduct.dart';
 import 'package:mcsofttech/ui/module/meridukaan/create_shop.dart';
 import 'package:mcsofttech/ui/module/meridukaan/meri_dukaan.dart';
+import 'package:mcsofttech/ui/module/orders/vendor_order_list_page.dart';
 import 'package:mcsofttech/utils/common_util.dart';
 import 'package:numeral/ext.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -30,6 +31,7 @@ class MeriDukaanTabTabs extends StatefulWidget {
   @override
   State<MeriDukaanTabTabs> createState() => _MeriDukaanTabTabsState();
 }
+
 class _MeriDukaanTabTabsState extends State<MeriDukaanTabTabs> {
   final appPreferences = Get.find<AppPreferences>();
   final controller = Get.put(UserDashboardController());
@@ -184,13 +186,21 @@ class _MeriDukaanTabTabsState extends State<MeriDukaanTabTabs> {
         ),
         itemCount: controller.userDashboard?.cardData.length,
         itemBuilder: (BuildContext context, int index) {
-          return cardWidget(
-                  () {
-                    MeriDukaan.start(controller.userDashboard?.cardData[index].name??"Report", controller.userDashboard?.cardData[index].reportLink??"");
-              },
+          return cardWidget(() {
+            if (controller.userDashboard?.cardData[index].name
+                    .toLowerCase()
+                    .contains("total order") ??
+                false)
+              VendorOrderListPage.start("My Orders");
+            else
+              MeriDukaan.start(
+                  controller.userDashboard?.cardData[index].name ?? "Report",
+                  controller.userDashboard?.cardData[index].reportLink ?? "");
+          },
               "assets/svg/icon_msg_box.svg",
               "${controller.userDashboard?.cardData[index].name}",
-              Common.numberDigitParseInk(controller.userDashboard?.cardData[index].intvalue??0),
+              Common.numberDigitParseInk(
+                  controller.userDashboard?.cardData[index].intvalue ?? 0),
               "${controller.userDashboard?.cardData[index].reportLink}");
         });
     /* return GridView.count(

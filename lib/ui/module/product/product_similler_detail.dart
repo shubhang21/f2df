@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mcsofttech/constants/Constant.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/controllers/meridhukaan/add_user_action_controller.dart';
 import 'package:mcsofttech/controllers/product/product_Detail_controller.dart';
 import 'package:mcsofttech/data/preferences/AppPreferences.dart';
@@ -40,10 +43,10 @@ class ProductSimilarDetail extends AppPageWithAppBar {
 
   ProductSimilarDetail({Key? key}) : super(key: key);
   static Future<bool?> start<bool>(
-      String title, {
-        comingFrom,
-        allProduct,
-      }) {
+    String title, {
+    comingFrom,
+    allProduct,
+  }) {
     if (comingFrom == "Similar") {
       return navigatePlacementNamedl(routeName,
           currentPageTitle: title,
@@ -56,7 +59,7 @@ class ProductSimilarDetail extends AppPageWithAppBar {
     });
   }
 
-  final controller = Get.put(ProductDetailController());
+  final controller = Get.put(CartController());
   final userActionController = Get.put(AddUserActionController());
   final controllerProduct = Get.put(ProductController());
   final appPreferences = Get.find<AppPreferences>();
@@ -66,77 +69,75 @@ class ProductSimilarDetail extends AppPageWithAppBar {
 
   @override
   List<Widget>? get action => [
-    InkWell(
-      onTap: () {
-        showDialog(
-            context: Get.context!,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Select Language'),
-                content: Common.languageAlertDialoagContainer(),
-              );
-            });
-      },
-      child: Padding(
-        padding:
-        const EdgeInsets.only(left: 0, right: 15, top: 8, bottom: 8),
-        child: Stack(
-          children: [
-            Align(
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                    width: 25, height: 25, 'assets/png/icon_lang.svg')),
-          ],
+        InkWell(
+          onTap: () {
+            showDialog(
+                context: Get.context!,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Select Language'),
+                    content: Common.languageAlertDialoagContainer(),
+                  );
+                });
+          },
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 0, right: 15, top: 8, bottom: 8),
+            child: Stack(
+              children: [
+                Align(
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                        width: 25, height: 25, 'assets/png/icon_lang.svg')),
+              ],
+            ),
+          ),
         ),
-      ),
-    ),
-    InkWell(
-      onTap: () async => await launchUrl(Uri.parse(
-          "whatsapp://send?phone=+91${allProduct.mobile}&text=https://www.f2df.com/product/details?id=${allProduct.p_id} \n For Enquiry on app ‘I am interested in this product")),
-      child: Padding(
-        padding:
-        const EdgeInsets.only(left: 0, right: 15, top: 8, bottom: 8),
-        child: Stack(
-          children: [
-            Align(
-                alignment: Alignment.center,
-                child: SvgPicture.asset("assets/png/icon_chat_app.svg")),
-          ],
+        InkWell(
+          onTap: () async => await launchUrl(Uri.parse(
+              "whatsapp://send?phone=+91${allProduct.mobile}&text=https://www.f2df.com/product/details?id=${allProduct.p_id} \n For Enquiry on app ‘I am interested in this product")),
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 0, right: 15, top: 8, bottom: 8),
+            child: Stack(
+              children: [
+                Align(
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset("assets/png/icon_chat_app.svg")),
+              ],
+            ),
+          ),
         ),
-      ),
-    ),
-    InkWell(
-      onTap: () {
-        CartListPage.start("my_cart".tr);
-        if (appPreferences.isLoggedIn) {
-          // KartStorePage.start();
-        } else {
-          //  LogInScreen.start();
-        }
-      },
-      child: Padding(
-        padding:
-        const EdgeInsets.only(left: 0, right: 15, top: 8, bottom: 8),
-        child: Stack(
-          children: [
-            Align(
-                alignment: Alignment.center,
-                child: SvgPicture.asset('assets/png/icon_cart.svg')),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Obx(() => KartCounter(
-                count: Provider.of<CartNotifier>(Get.context!)
-                    .productList
-                    .length,
-              )),
-            )
-          ],
+        InkWell(
+          onTap: () {
+            CartListPage.start("my_cart".tr);
+            if (appPreferences.isLoggedIn) {
+              // KartStorePage.start();
+            } else {
+              //  LogInScreen.start();
+            }
+          },
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 0, right: 15, top: 8, bottom: 8),
+            child: Stack(
+              children: [
+                Align(
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset('assets/png/icon_cart.svg')),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Obx(() => KartCounter(
+                        count: controller.cartCount.value,
+                      )),
+                )
+              ],
+            ),
+          ),
         ),
-      ),
-    ),
-  ];
+      ];
 
   @override
   Widget get body {
@@ -145,90 +146,97 @@ class ProductSimilarDetail extends AppPageWithAppBar {
     quantity.value = allProduct.quantity < 1 ? 1 : 1;
     controllerProduct.callProductDetailApi(productId: allProduct.p_id);
     return Obx(
-            () => controllerProduct.isLoader.value ? const Loader() : container);
+        () => controllerProduct.isLoader.value ? const Loader() : container);
   }
 
   Widget get container {
-    return Scaffold(body: Container(
-      color: MyColors.coloPageBg,
-      width: screenWidget,
-      margin: const EdgeInsets.symmetric(vertical: 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                imageCarousel,
-                Positioned(
-                  top: 190,
-                  bottom: 20,
-                  child: Container(
-                    color: Colors.transparent,
-                    width: screenWidget,
-                    height: screenHeight,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: productTypeAndDetailCard,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          /* allProduct.productDesc.isNotEmpty
+    return Scaffold(
+      body: Container(
+        color: MyColors.coloPageBg,
+        width: screenWidget,
+        margin: const EdgeInsets.symmetric(vertical: 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  imageCarousel,
+                  Positioned(
+                    top: 190,
+                    bottom: 20,
+                    child: Container(
+                      color: Colors.transparent,
+                      width: screenWidget,
+                      height: screenHeight,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: productTypeAndDetailCard,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            /* allProduct.productDesc.isNotEmpty
                               ? descriptionData
                               : const SizedBox.shrink(),*/
-                          cartAndBuy,
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          if (!(allProduct.featureDetailsValue!.isNotEmpty &&
-                              allProduct.featureDetailsValue!
-                                  .where((element) =>
-                                  element.productFeatureKey.toLowerCase().contains("mrp"))
-                                  .isNotEmpty))
-                            whatsAppAndCall,
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          if (controllerProduct
-                              .productUserDetailList.isNotEmpty)
-                            Card(
-                              elevation: 2,
-                              child: Center(
-                                child: Obx(() => userProductList),
-                              ),
+                            cartAndBuy,
+                            const SizedBox(
+                              height: 10,
                             ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          divider,
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          if (controllerProduct
-                              .productSimilerDetailList.isNotEmpty)
-                            similerProductList(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        ],
+                            if (!(allProduct.featureDetailsValue!.isNotEmpty &&
+                                allProduct.featureDetailsValue!
+                                    .where((element) => element
+                                        .productFeatureKey
+                                        .toLowerCase()
+                                        .contains("mrp"))
+                                    .isNotEmpty))
+                              whatsAppAndCall,
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            if (controllerProduct
+                                .productUserDetailList.isNotEmpty)
+                              Card(
+                                elevation: 2,
+                                child: Center(
+                                  child: Obx(() => userProductList),
+                                ),
+                              ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            divider,
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            if (controllerProduct
+                                .productSimilerDetailList.isNotEmpty)
+                              similerProductList(),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ), floatingActionButton: storeDetail,
+      floatingActionButton: storeDetail,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomBar(),);
+      bottomNavigationBar: BottomBar(),
+    );
   }
+
   Widget get storeDetail {
     return SizedBox(
       child: FloatingActionButton(
@@ -248,6 +256,7 @@ class ProductSimilarDetail extends AppPageWithAppBar {
       ),
     );
   }
+
   Widget get productTypeAndDetailCard {
     return Card(
       child: Column(
@@ -285,7 +294,7 @@ class ProductSimilarDetail extends AppPageWithAppBar {
             height: 10,
           ),
           (allProduct.featureDetailsValue != null &&
-              allProduct.featureDetailsValue!.isNotEmpty)
+                  allProduct.featureDetailsValue!.isNotEmpty)
               ? detailList
               : const SizedBox.shrink(),
           const SizedBox(
@@ -301,14 +310,14 @@ class ProductSimilarDetail extends AppPageWithAppBar {
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(1.0))),
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                (Set<MaterialState> state) {
-              if (state.contains(MaterialState.pressed)) {
-                return Palette.buttonsColor;
-              } else if (state.contains(MaterialState.disabled)) {
-                return Palette.buttonsColor;
-              }
-              return Palette.buttonsColor;
-            }));
+            (Set<MaterialState> state) {
+          if (state.contains(MaterialState.pressed)) {
+            return Palette.buttonsColor;
+          } else if (state.contains(MaterialState.disabled)) {
+            return Palette.buttonsColor;
+          }
+          return Palette.buttonsColor;
+        }));
   }
 
   Widget get imageCarousel {
@@ -337,11 +346,14 @@ class ProductSimilarDetail extends AppPageWithAppBar {
               scrollDirection: Axis.horizontal,
               children: List.generate(
                   controllerProduct.productUserDetailList.length,
-                      (i) => controllerProduct.productUserDetailList[i].p_id==allProduct.p_id?const SizedBox.shrink():SizedBox(
-                      width: screenWidget / 2.2,
-                      child: SubCatProductSimillerCard(
-                          controllerProduct.productUserDetailList[i],
-                          "detail"))),
+                  (i) => controllerProduct.productUserDetailList[i].p_id ==
+                          allProduct.p_id
+                      ? const SizedBox.shrink()
+                      : SizedBox(
+                          width: screenWidget / 2.2,
+                          child: SubCatProductSimillerCard(
+                              controllerProduct.productUserDetailList[i],
+                              "detail"))),
             ),
           )
         ],
@@ -404,9 +416,10 @@ class ProductSimilarDetail extends AppPageWithAppBar {
   List<Widget> similerProduct() {
     List<Widget> list = [];
     for (int i = 0;
-    i <= controllerProduct.productSimilerDetailList.length - 1;
-    i++) {
-      if(controllerProduct.productSimilerDetailList[i].p_id!=allProduct.p_id) {
+        i <= controllerProduct.productSimilerDetailList.length - 1;
+        i++) {
+      if (controllerProduct.productSimilerDetailList[i].p_id !=
+          allProduct.p_id) {
         list.add(SizedBox(
           width: screenWidget / 2.2,
           child: SubCatProductSimillerCard(
@@ -459,27 +472,28 @@ class ProductSimilarDetail extends AppPageWithAppBar {
         children: [
           price,
           Obx(() => InkWell(
-            onTap: () {
-              userActionController.userActionApi(
-                  allProduct.productName,
-                  allProduct.productFee.toString(),
-                  allProduct.subCategory?.subCategoryName ?? "",
-                  allProduct.p_id,
-                  "Wish",
-                  allProduct.mobile,
-                  "fab",
-                  allProduct.userId.toString(),
-                  allProduct.img1,
-                  "",
-                  "1");
-            },
-            child: Icon(
-              Icons.favorite,
-              color: userActionController.fabProduct.value
-                  ? Palette.kColorRed
-                  : Palette.kColorGrey,
-            ),
-          ))
+                onTap: () {
+                  userActionController.userActionApi(
+                      allProduct.productName,
+                      allProduct.productFee.toString(),
+                      allProduct.subCategory?.subCategoryName ?? "",
+                      allProduct.p_id,
+                      "Wish",
+                      allProduct.mobile,
+                      "fab",
+                      allProduct.userId.toString(),
+                      allProduct.img1,
+                      "",
+                      "1",
+                      "");
+                },
+                child: Icon(
+                  Icons.favorite,
+                  color: userActionController.fabProduct.value
+                      ? Palette.kColorRed
+                      : Palette.kColorGrey,
+                ),
+              ))
         ],
       ),
     );
@@ -518,7 +532,7 @@ class ProductSimilarDetail extends AppPageWithAppBar {
           onTap: () {
             Common.share(
                 linkUrl:
-                "https://www.f2df.com/product/details?id=${allProduct.p_id}",
+                    "https://www.f2df.com/product/details?id=${allProduct.p_id}",
                 title: allProduct.productName);
           },
           child: Padding(
@@ -670,19 +684,19 @@ class ProductSimilarDetail extends AppPageWithAppBar {
         shrinkWrap: true,
         scrollDirection: Axis.vertical,
         children: List.generate(allProduct.featureDetailsValue!.length,
-                (i) => categoryText(allProduct.featureDetailsValue![i])),
+            (i) => categoryText(allProduct.featureDetailsValue![i])),
       ),
     );
   }
 
   Widget categoryText(ProductFeatureDetailsValue data) {
-    if(data.productFeatureKey.isEmpty){
+    if (data.productFeatureKey.isEmpty) {
       return const SizedBox.shrink();
     }
-    if(data.productFeatureKey=="AGGREMENT"){
+    if (data.productFeatureKey == "AGGREMENT") {
       return const SizedBox.shrink();
     }
-    if(data.productFeatureKey=="DELIVERY AVAILABLE"){
+    if (data.productFeatureKey == "DELIVERY AVAILABLE") {
       return const SizedBox.shrink();
     }
     return Column(
@@ -717,12 +731,16 @@ class ProductSimilarDetail extends AppPageWithAppBar {
                 ),
               ],
             )),
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
         const Divider(
           height: 1,
           color: MyColors.colorTextGrey,
         ),
-        const  SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
       ],
     );
   }
@@ -800,68 +818,70 @@ class ProductSimilarDetail extends AppPageWithAppBar {
           children: [
             Expanded(
                 child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: MyColors.themeColor),
-                  height: 40,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: MaterialButton(
-                      onPressed: () {
-                        userActionController.userActionApi(
-                            allProduct.productName,
-                            allProduct.productFee.toString(),
-                            allProduct.subCategory?.subCategoryName ?? "",
-                            allProduct.p_id,
-                            "Enquiry",
-                            allProduct.mobile,
-                            "whatsApp",
-                            allProduct.userId.toString(),
-                            allProduct.img1,
-                            "",
-                            "1");
-                      },
-                      color: MyColors.themeColor,
-                      textColor: Colors.white,
-                      shape: const CircleBorder(),
-                      child: const Icon(
-                        Icons.account_box,
-                      ),
-                    ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: MyColors.themeColor),
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: MaterialButton(
+                  onPressed: () {
+                    userActionController.userActionApi(
+                        allProduct.productName,
+                        allProduct.productFee.toString(),
+                        allProduct.subCategory?.subCategoryName ?? "",
+                        allProduct.p_id,
+                        "Enquiry",
+                        allProduct.mobile,
+                        "whatsApp",
+                        allProduct.userId.toString(),
+                        allProduct.img1,
+                        "",
+                        "1",
+                        "");
+                  },
+                  color: MyColors.themeColor,
+                  textColor: Colors.white,
+                  shape: const CircleBorder(),
+                  child: const Icon(
+                    Icons.account_box,
                   ),
-                )),
+                ),
+              ),
+            )),
             const SizedBox(
               width: 10,
             ),
             Expanded(
                 child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(width: 1, color: MyColors.themeColor)),
-                  height: 40,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: InkWell(
-                      onTap: () {
-                        userActionController.userActionApi(
-                            allProduct.productName,
-                            allProduct.productFee.toString(),
-                            allProduct.subCategory?.subCategoryName ?? "",
-                            allProduct.p_id,
-                            "Enquiry",
-                            allProduct.mobile,
-                            "call",
-                            allProduct.userId.toString(),
-                            allProduct.img1,
-                            "",
-                            "1");
-                      },
-                      child: const Icon(
-                        Icons.call,
-                      ),
-                    ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(width: 1, color: MyColors.themeColor)),
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: InkWell(
+                  onTap: () {
+                    userActionController.userActionApi(
+                        allProduct.productName,
+                        allProduct.productFee.toString(),
+                        allProduct.subCategory?.subCategoryName ?? "",
+                        allProduct.p_id,
+                        "Enquiry",
+                        allProduct.mobile,
+                        "call",
+                        allProduct.userId.toString(),
+                        allProduct.img1,
+                        "",
+                        "1",
+                        "");
+                  },
+                  child: const Icon(
+                    Icons.call,
                   ),
-                )),
+                ),
+              ),
+            )),
           ],
         ),
       ),
@@ -887,8 +907,7 @@ class ProductSimilarDetail extends AppPageWithAppBar {
           InkWell(
               onTap: () {
                 if (quantity.value >= 1) {
-                  Provider.of<CartNotifier>(Get.context!, listen: false)
-                      .removeFromCart(allProduct.p_id);
+                  controller.decreaseQuantity(allProduct.p_id.toString(), 1);
                   quantity.value -= 1;
                 }
               },
@@ -908,10 +927,10 @@ class ProductSimilarDetail extends AppPageWithAppBar {
             child: SizedBox(
               width: 40,
               child: Obx(() => Text(
-                quantity.value.toString(),
-                textAlign: TextAlign.center,
-                style: TextStyles.headingTexStyle(color: Palette.appColor),
-              )),
+                    quantity.value.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyles.headingTexStyle(color: Palette.appColor),
+                  )),
             ),
           ),
           const SizedBox(
@@ -1037,79 +1056,84 @@ class ProductSimilarDetail extends AppPageWithAppBar {
             ),
             if (allProduct.featureDetailsValue!.isNotEmpty &&
                 allProduct.featureDetailsValue!
-                    .where((element) => element.productFeatureKey.toLowerCase().contains("mrp"))
+                    .where((element) =>
+                        element.productFeatureKey.toLowerCase().contains("mrp"))
                     .isNotEmpty)
               Row(
                 children: [
                   Expanded(
                       child: PrimaryElevatedBtn("Enquiry on lead", () {
-                        userActionController.userActionApi(
-                            allProduct.productName,
-                            allProduct.productFee.toString(),
-                            allProduct.subCategory?.subCategoryName ?? "",
-                            allProduct.p_id,
-                            "Enquiry",
-                            "9138111860",
-                            "whatsApp",
-                            allProduct.userId.toString(),
-                            allProduct.img1,
-                            "",
-                            "1");
-                      })),
+                    userActionController.userActionApi(
+                        allProduct.productName,
+                        allProduct.productFee.toString(),
+                        allProduct.subCategory?.subCategoryName ?? "",
+                        allProduct.p_id,
+                        "Enquiry",
+                        "9138111860",
+                        "whatsApp",
+                        allProduct.userId.toString(),
+                        allProduct.img1,
+                        "",
+                        "1",
+                        "");
+                  })),
                   const SizedBox(
                     width: 10,
                   ),
                   Expanded(
                       child: OutLineElevatedBtn("BUY NOW", () {
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(8.0),
-                                    topLeft: Radius.circular(15.0)),
-                                side: BorderSide(color: Colors.white)),
-                            context: Get.context!,
-                            builder: (BuildContext c) {
-                              return Padding(
-                                  padding: MediaQuery.of(Get.context!).viewInsets,
-                                  child: Container(
-                                      child: Wrap(
-                                        children: <Widget>[
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const Divider(
-                                            height: 1,
-                                            color: MyColors.themeColor,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                              children: [
-                                                payFullPayment,
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                if((allProduct.productFee* quantity.value)>1000)payPartial,
-                                                const SizedBox(height: 50),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )));
-                            });
-                        // Common.showToast("Coming soon");
-                        //buyNow();
-                      })),
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(8.0),
+                                topLeft: Radius.circular(15.0)),
+                            side: BorderSide(color: Colors.white)),
+                        context: Get.context!,
+                        builder: (BuildContext c) {
+                          return Padding(
+                              padding: MediaQuery.of(Get.context!).viewInsets,
+                              child: Container(
+                                  child: Wrap(
+                                children: <Widget>[
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Divider(
+                                    height: 1,
+                                    color: MyColors.themeColor,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        payFullPayment,
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        if ((allProduct.productFee *
+                                                quantity.value) >
+                                            1000)
+                                          payPartial,
+                                        const SizedBox(height: 50),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )));
+                        });
+                    // Common.showToast("Coming soon");
+                    //buyNow();
+                  })),
                 ],
               ),
           ],
@@ -1126,10 +1150,15 @@ class ProductSimilarDetail extends AppPageWithAppBar {
         height: 45,
         child: PrimaryElevatedBtn(
             "Pay Full Payment",
-                () async => {
-              wishController
-                  .createOrderId(allProduct.productFee*quantity.value)
-            },
+            () async => {
+                  wishController
+                      .createOrderId(allProduct.productFee * quantity.value, [
+                    {
+                      "productId": allProduct.p_id,
+                      "quantity": allProduct.quantity
+                    }
+                  ])
+                },
             borderRadius: 10.0),
       ),
     );
@@ -1187,16 +1216,16 @@ class ProductSimilarDetail extends AppPageWithAppBar {
               children: [
                 Expanded(
                     child: PrimaryElevatedBtn("ADD TO CART", () {
-                      Get.delete<ProductDetailController>();
-                      CartListPage.start("CHAT NOW");
-                    })),
+                  Get.delete<CartController>();
+                  CartListPage.start("CHAT NOW");
+                })),
                 const SizedBox(
                   width: 10,
                 ),
                 Expanded(
                     child: OutLineElevatedBtn("CALL NOW", () {
-                      Common.showToast("Coming soon");
-                    })),
+                  Common.showToast("Coming soon");
+                })),
               ],
             )
           ],
@@ -1212,22 +1241,25 @@ class ProductSimilarDetail extends AppPageWithAppBar {
           width: screenWidget / 2,
           height: screenHeight / 15,
           child: PrimaryElevatedBtn(buttonStyle: checkOutButtonStyle, "Buy now",
-                  () {
-                Get.delete<ProductDetailController>();
-                CartListPage.start("My Cart");
-              }, borderRadius: 1.0),
+              () {
+            Get.delete<CartController>();
+            CartListPage.start("My Cart");
+          }, borderRadius: 1.0),
         ),
         SizedBox(
           width: screenWidget / 2,
           height: screenHeight / 15,
           child: PrimaryElevatedBtn(
               "Add to cart",
-                  () async => {
-                if (appPreferences.isLoggedIn)
-                  {controller.addToCart(allProduct)}
-                else
-                  {LoginPage.start()}
-              },
+              () async => {
+                    if (appPreferences.isLoggedIn)
+                      {
+                        controller.addItems(
+                            allProduct.p_id.toString(), allProduct.quantity)
+                      }
+                    else
+                      {LoginPage.start()}
+                  },
               borderRadius: 1.0),
         ),
         Obx(() => similerProductList()),
@@ -1278,7 +1310,8 @@ class ProductSimilarDetail extends AppPageWithAppBar {
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    Provider.of<CartNotifier>(Get.context!, listen: false).clearCart();
+    // Provider.of<CartNotifier>(Get.context!, listen: false).clearCart();
+    //TODO
     wishController.saveTransaction(
         0,
         0,

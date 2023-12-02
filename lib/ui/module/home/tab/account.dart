@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mcsofttech/ui/module/profile/profile_list.dart';
 import 'package:mcsofttech/ui/module/profile/profile_page.dart';
 
 import '../../../../utils/palette.dart';
@@ -163,7 +164,7 @@ class _AccountState extends State<Account> {
   Widget get profileWidget {
     return InkWell(
       onTap: () {
-        EditProfile.start();
+        ProfileOptions.start();
       },
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Row(

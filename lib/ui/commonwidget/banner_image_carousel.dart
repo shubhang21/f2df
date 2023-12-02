@@ -38,11 +38,12 @@ class _CarouselState extends State<BannerCarousel> {
       } else {
         activePage--;
       }
-      _pageController.animateToPage(
-        activePage,
-        duration: const Duration(milliseconds: 1000),
-        curve: Curves.easeIn,
-      );
+      if (_pageController.hasListeners)
+        _pageController.animateToPage(
+          activePage,
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeIn,
+        );
     });
   }
 

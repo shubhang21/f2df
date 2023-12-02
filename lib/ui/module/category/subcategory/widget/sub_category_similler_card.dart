@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import 'package:mcsofttech/constants/Constant.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/models/home/AllProduct.dart';
 import 'package:mcsofttech/theme/my_theme.dart';
 
@@ -20,7 +21,8 @@ import '../../../../../utils/palette.dart';
 import '../../../../commonwidget/text_style.dart';
 
 class SubCatProductSimillerCard extends BaseStateLessWidget {
-  const SubCatProductSimillerCard(this.recommdedProduct, this.comingFrom, {super.key});
+  const SubCatProductSimillerCard(this.recommdedProduct, this.comingFrom,
+      {super.key});
 
   final AllProduct recommdedProduct;
   final String comingFrom;
@@ -41,7 +43,7 @@ class SubCatProductSimillerCard extends BaseStateLessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    Get.delete<ProductDetailController>();
+                    Get.delete<CartController>();
                     Get.delete<AddUserActionController>();
                     Get.delete<ProductController>();
                     if (comingFrom == "detail") {

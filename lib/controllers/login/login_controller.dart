@@ -6,6 +6,7 @@ import 'package:mcsofttech/data/preferences/AppPreferences.dart';
 import 'package:mcsofttech/models/login/LoginData.dart';
 import 'package:mcsofttech/ui/module/home/home.dart';
 import 'package:mcsofttech/ui/module/login/otp_page.dart';
+import 'package:mcsofttech/ui/module/profile/profile_list.dart';
 import 'package:mcsofttech/ui/module/profile/profile_page.dart';
 import 'package:mcsofttech/utils/analytics.dart';
 import '../../utils/common_util.dart';
@@ -23,22 +24,20 @@ class LoginController extends BaseController {
   final isLoader = false.obs;
   late LoginData loginModel;
 
-  void callLoginApi({mobile, loginId, username, email, type,termAndCondition}) async {
+  void callLoginApi(
+      {mobile, loginId, username, email, type, termAndCondition}) async {
     if (type != "gmail" && mobileController.text.isEmpty) {
       Common.showToast("Please enter mobile");
       return;
     }
-    if(!termAndCondition){
+    if (!termAndCondition) {
       Common.showToast("Please accept term and condition.");
       return;
     }
     showLoader();
     try {
-      final response = await apiServices.loginApi(
-        mobile,
-        loginId,
-          termAndCondition
-      );
+      final response =
+          await apiServices.loginApi(mobile, loginId, termAndCondition);
       hideLoader();
       if (response == null) Common.showToast("Server Error!");
       if (response != null &&
@@ -57,9 +56,9 @@ class LoginController extends BaseController {
           appPreferences.saveLoggedIn(false);
           OtpPage.start(mobile);
         } else if (!loginModel.userExist) {
-          EditProfile.start(fromTab: "FromLogin");
+          ProfileOptions.start(fromTab: "FromLogin");
         } else {
-         // Analytics.logLogin(loginMethod: "mobile");
+          // Analytics.logLogin(loginMethod: "mobile");
           //Analytics.logUser(userId: appPreferences.userId, userName: appPreferences.userName);
           Home.start(0);
         }
@@ -121,7 +120,7 @@ class LoginController extends BaseController {
       if (response.loginData!.userExist) {
         Home.start(0);
       } else {
-        EditProfile.start(fromTab: "FromLogin");
+        ProfileOptions.start(fromTab: "FromLogin");
       }
     }
   }

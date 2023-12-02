@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mcsofttech/constants/Constant.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/theme/my_theme.dart';
 import 'package:mcsofttech/ui/base/base_satateless_widget.dart';
 import '../../../../controllers/meridhukaan/add_user_action_controller.dart';
 import '../../../../controllers/meridhukaan/total_visitor_controller.dart';
-import '../../../../controllers/product/product_Detail_controller.dart';
 import '../../../../controllers/product/product_list_controller.dart';
 import '../../../../data/preferences/AppPreferences.dart';
 import '../../../../models/meridukaan/userdashboard/Equiry.dart';
@@ -15,7 +15,7 @@ import '../../../commonwidget/text_style.dart';
 import '../../login/login_page.dart';
 
 class WishListCard extends BaseStateLessWidget {
-  final controller = Get.put(ProductDetailController());
+  final controller = Get.put(CartController());
   final controllerProduct = Get.put(ProductController());
   final appPreferences = Get.find<AppPreferences>();
   final wishController = Get.find<TotalVisitorController>();
@@ -117,7 +117,7 @@ class WishListCard extends BaseStateLessWidget {
   Widget get delete {
     return InkWell(
       onTap: () {
-        wishController.deleteAction("Wish", product.product_id, product.id);
+        controller.deleteItem(product.uuid);
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 0, right: 10),
@@ -135,7 +135,7 @@ class WishListCard extends BaseStateLessWidget {
         InkWell(
           onTap: () {
             if (appPreferences.isLoggedIn) {
-              controller.productAdd(product, 1);
+              controller.addItems(product.product_id.toString(), 1);
             } else {
               LoginPage.start();
             }
@@ -150,7 +150,8 @@ class WishListCard extends BaseStateLessWidget {
                 product.product_user_id.toString(),
                 product.productImg,
                 "",
-                product.qunatity.toString());
+                product.qunatity.toString(),
+                product.uuid);
           },
           child: Container(
             decoration: BoxDecoration(

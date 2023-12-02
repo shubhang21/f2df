@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/data/preferences/AppPreferences.dart';
 import 'package:mcsofttech/models/meridukaan/userdashboard/Equiry.dart';
 import 'package:mcsofttech/theme/my_theme.dart';
@@ -28,7 +29,6 @@ class CartListPage extends AppPageWithAppBar {
   }
 
   final wishController = Get.put(TotalVisitorController());
-  final productCartController = Get.put(ProductDetailController());
   final appPreference = Get.find<AppPreferences>();
   final cartCount = 0.obs;
   final totalPrice = 0.obs;
@@ -59,46 +59,54 @@ class CartListPage extends AppPageWithAppBar {
   Widget get bottomUI {
     return SizedBox(
       width: screenWidget,
-      child: Column(children: [Card(
-        margin: const EdgeInsets.all(10),
-        elevation: 2,
-        color: MyColors.kColorWhite,
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:  [ Text("subTotal".tr), Obx(() => Text("\u{20B9} ${wishController.totalPrice.value}"))],
-              ),
-              Divider(
-                color: MyColors.lineColor,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:  [Text('shipping'.tr), const Text("\u{20B9} 0")],
-              ),
-              Divider(
-                color: MyColors.kColorGrey,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        children: [
+          Card(
+            margin: const EdgeInsets.all(10),
+            elevation: 2,
+            color: MyColors.kColorWhite,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
                 children: [
-                  Text(
-                    "total_amount".tr,
-                    style: TextStyles.headingTexStyle(
-                        color: Palette.kColorBlack,
-                        fontSize: 16,
-                        fontFamily: "assets/font/Oswald-Bold.ttf"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("subTotal".tr),
+                      Obx(() =>
+                          Text("\u{20B9} ${wishController.totalPrice.value}"))
+                    ],
                   ),
-                  totalAmountText
+                  Divider(
+                    color: MyColors.lineColor,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [Text('shipping'.tr), const Text("\u{20B9} 0")],
+                  ),
+                  Divider(
+                    color: MyColors.kColorGrey,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "total_amount".tr,
+                        style: TextStyles.headingTexStyle(
+                            color: Palette.kColorBlack,
+                            fontSize: 16,
+                            fontFamily: "assets/font/Oswald-Bold.ttf"),
+                      ),
+                      totalAmountText
+                    ],
+                  ),
                 ],
               ),
-
-            ],
+            ),
           ),
-        ),
-      ),checkOut],),
+          checkOut
+        ],
+      ),
     );
   }
 
@@ -127,51 +135,57 @@ class CartListPage extends AppPageWithAppBar {
     return SizedBox(
       width: screenWidget,
       child: Padding(
-          padding:  const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: SizedBox(
             child: PrimaryElevatedBtn(
                 buttonStyle: checkOutButtonStyle, "proceed_to_pay".tr, () {
               // wishController.createOrderId(wishController.totalPrice.value*100);
-               showModalBottomSheet(
-                   isScrollControlled: true,
-                   shape: const RoundedRectangleBorder(
-                       borderRadius: BorderRadius.only(
-                           topRight: Radius.circular(8.0), topLeft: Radius.circular(15.0)),
-                       side: BorderSide(color: Colors.white)),
-                   context: Get.context!,
-                   builder: (BuildContext c) {
-                     return Padding(padding: MediaQuery.of(Get.context!).viewInsets,child: Container(child: Wrap(
-                       children: <Widget>[const SizedBox(
-                         height: 10,
-                       ),
-                          const SizedBox(
-                           height: 10,
-                         ),
-                         const Divider(
-                           height: 1,
-                           color: MyColors.themeColor,
-                         ),
-                         const SizedBox(
-                           height: 10,
-                         ),
-                         Padding(
-                           padding: const EdgeInsets.only(left: 10, right: 10),
-                           child: Column(
-                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                             children: [
-                               payFullPayment,
-                               const SizedBox(
-                                 height: 10,
-                               ),
-                               if(wishController.totalPrice.value>1000)payPartial,
-                               const SizedBox(height: 50),
-                             ],
-                           ),
-                         ),
-                         ],)));
-
-                   });
-
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8.0),
+                          topLeft: Radius.circular(15.0)),
+                      side: BorderSide(color: Colors.white)),
+                  context: Get.context!,
+                  builder: (BuildContext c) {
+                    return Padding(
+                        padding: MediaQuery.of(Get.context!).viewInsets,
+                        child: Container(
+                            child: Wrap(
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Divider(
+                              height: 1,
+                              color: MyColors.themeColor,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  payFullPayment,
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  if (wishController.totalPrice.value > 1000)
+                                    payPartial,
+                                  const SizedBox(height: 50),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )));
+                  });
             }, borderRadius: 1.0),
           )),
     );
@@ -185,30 +199,41 @@ class CartListPage extends AppPageWithAppBar {
         height: 45,
         child: PrimaryElevatedBtn(
             "Pay Full Payment",
-                () async => {
-                wishController.createOrderId(wishController.totalPrice.value)
-            },
+            () async => wishController.createOrderId(
+                wishController.totalPrice.value,
+                wishController.equiryList.map((element) {
+                  return {
+                    "productId": element.product_id,
+                    "quantity": element.qunatity
+                  };
+                }).toList()),
             borderRadius: 10.0),
       ),
     );
   }
+
   Widget get payPartial {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20),
       child: SizedBox(
         width: screenWidget,
         height: 45,
-        child: PrimaryElevatedBtn(
-            "Book @ 10%",
-                () async {
-              int price =wishController.totalPrice.value;
-              double  data= (price/10);
-              wishController.createOrderId(data.toInt());
-            },
-            borderRadius: 10.0),
+        child: PrimaryElevatedBtn("Book @ 10%", () async {
+          int price = wishController.totalPrice.value;
+          double data = (price / 10);
+          wishController.createOrderId(
+              data.toInt(),
+              wishController.equiryList.map((element) {
+                return {
+                  "productId": element.product_id,
+                  "quantity": element.qunatity
+                };
+              }).toList());
+        }, borderRadius: 10.0),
       ),
     );
   }
+
   Widget get totalAmountText {
     return Obx(() => Text(
           "\u{20B9} ${wishController.totalPrice.value}",

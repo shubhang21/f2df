@@ -1,5 +1,6 @@
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/models/meridukaan/userdashboard/training_data.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,7 +19,8 @@ class AddUserActionController extends BaseController {
   final isLoader = false.obs;
   final fabProduct = false.obs;
 
-  void userActionApi(String productName,
+  void userActionApi(
+      String productName,
       String price,
       String subCategory,
       int product_id,
@@ -28,7 +30,8 @@ class AddUserActionController extends BaseController {
       String product_user_id,
       String productImg,
       String updateDate,
-      String qunatity) async {
+      String qunatity,
+      String productUuid) async {
     showLoader();
     final response = await apiServices.addUserActionData(
         productImg,
@@ -49,8 +52,7 @@ class AddUserActionController extends BaseController {
     hideLoader();
     if (response == null) {
       Common.showToast("Server Error!");
-      Provider.of<CartNotifier>(Get.context!, listen: false)
-          .removeFromCart(product_id);
+      Get.find<CartController>().deleteItem(productUuid);
     }
     if (response != null && response.status == 200) {
       if (type != "Enquiry") {
@@ -64,13 +66,11 @@ class AddUserActionController extends BaseController {
         return;
       }
       if (type == "Enquiry" || clickType == "whatsApp") {
-        await launchUrl(
-            Uri.parse("whatsapp://send?phone=+91$productMobile&text=https://www.f2df.com/product/details?id=$product_id \nFor Enquiry on app ‘I am interested in this product "));
+        await launchUrl(Uri.parse(
+            "whatsapp://send?phone=+91$productMobile&text=https://www.f2df.com/product/details?id=$product_id \nFor Enquiry on app ‘I am interested in this product "));
 
-    return;
+        return;
       }
     }
   }
 }
-
-

@@ -2,6 +2,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mcsofttech/controllers/cart/cart_controller.dart';
 import 'package:mcsofttech/controllers/splash/force_update_controller.dart';
 import 'package:mcsofttech/services/navigator.dart';
 import 'package:mcsofttech/theme/my_theme.dart';
@@ -33,20 +34,19 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _navigateToHome();
-
   }
 
   _navigateToHome() async {
     /*controller.callForceUpdateApi().then((value) {
       if (value) {*/
-        if (appPreferences.isLoggedIn) {
-          controller.callUserDashboardCardCall("Cart");
-          Home.start(0);
-          return;
-        }
-        LoginPage.start();
-      }
-   /* });*/
+    if (appPreferences.isLoggedIn) {
+      // controller.callUserDashboardCardCall("Cart");
+      Home.start(0);
+      return;
+    }
+    LoginPage.start();
+  }
+  /* });*/
   //}
 
   @override

@@ -5,6 +5,7 @@ import 'package:mcsofttech/ui/module/home/tab/prime_screen.dart';
 import 'package:mcsofttech/ui/module/home/tab/training_screen.dart';
 import 'package:mcsofttech/ui/module/meridukaan/meri_dukaan.dart';
 import 'package:mcsofttech/ui/module/news_and_video/news_screen.dart';
+import 'package:mcsofttech/ui/module/profile/profile_list.dart';
 import 'package:mcsofttech/ui/module/testimonial/testimonial_screen.dart';
 import 'package:mcsofttech/ui/module/thankyou/thank_you.dart';
 import '../../../../data/preferences/AppPreferences.dart';
@@ -89,7 +90,7 @@ class MoreTab extends AppPageWithAppBar {
     return InkWell(
       onTap: () {
         if (appPreferences.isLoggedIn) {
-          EditProfile.start(fromTab: "Home");
+          ProfileOptions.start(fromTab: "Home");
         } else {
           LoginPage.start();
         }
@@ -152,7 +153,8 @@ class MoreTab extends AppPageWithAppBar {
   Widget get promoteBusiness {
     return InkWell(
       onTap: () {
-       MeriDukaan.start("Promote Business", "https://f2df.com/grow-business/promote-your-business");
+        MeriDukaan.start("Promote Business",
+            "https://f2df.com/grow-business/promote-your-business");
       },
       child: const MoreWidgetCard(
           assetName: "assets/svg/ic_promote_business_card.png",
