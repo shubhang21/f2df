@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mcsofttech/theme/my_theme.dart';
 import 'package:mcsofttech/utils/palette.dart';
 
@@ -8,7 +9,7 @@ class KartCounter extends StatelessWidget {
     required this.count,
   }) : super(key: key);
 
-  final int count;
+  final RxInt count;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +19,10 @@ class KartCounter extends StatelessWidget {
         decoration:
             BoxDecoration(color: MyColors.transparent, shape: BoxShape.circle),
         child: Center(
-            child: Text(
-          count.toString(),
-          style: const TextStyle(color: Palette.kColorWhite, fontSize: 10),
-        )));
+            child: Obx(() => Text(
+                  count.value.toString(),
+                  style:
+                      const TextStyle(color: Palette.kColorWhite, fontSize: 10),
+                ))));
   }
 }

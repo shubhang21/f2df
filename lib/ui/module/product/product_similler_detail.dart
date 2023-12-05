@@ -130,7 +130,7 @@ class ProductSimilarDetail extends AppPageWithAppBar {
                   left: 0,
                   right: 0,
                   child: Obx(() => KartCounter(
-                        count: controller.cartCount.value,
+                        count: controller.cartCount,
                       )),
                 )
               ],

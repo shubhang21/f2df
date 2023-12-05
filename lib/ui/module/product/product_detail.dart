@@ -127,9 +127,9 @@ class ProductDetail extends AppPageWithAppBar {
                   top: 0,
                   left: 0,
                   right: 0,
-                  child: Obx(() => KartCounter(
-                        count: Get.find<CartController>().cartCount.value,
-                      )),
+                  child: KartCounter(
+                    count: Get.find<CartController>().cartCount,
+                  ),
                 )
               ],
             ),
@@ -142,6 +142,9 @@ class ProductDetail extends AppPageWithAppBar {
     //  Analytics.sendCurrentScreen("ProductDetail");
     allProduct = arguments['allProduct'];
     quantity.value = allProduct.quantity < 1 ? 1 : 1;
+    final cartProduct =
+        controller.cartList.where((p0) => p0.product_id == allProduct.p_id);
+    if (cartProduct.isNotEmpty) quantity.value = cartProduct.first.qunatity;
     controllerProduct.callProductDetailApi(productId: allProduct.p_id);
     return Obx(
         () => controllerProduct.isLoader.value ? const Loader() : container);

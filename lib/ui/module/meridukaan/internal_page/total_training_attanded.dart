@@ -92,7 +92,7 @@ class TotalTraining extends AppPageWithAppBar {
                   left: 0,
                   right: 0,
                   child: KartCounter(
-                    count: Get.find<CartController>().cartCount.value,
+                    count: Get.find<CartController>().cartCount,
                   ),
                 )
               ],

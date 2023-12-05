@@ -36,7 +36,7 @@ class CartListPage extends AppPageWithAppBar {
 
   @override
   Widget get body {
-    wishController.callUserDashboardCardCall("Cart");
+    wishController.cartController.update();
     return Obx(() => wishController.isLoader.value
         ? const Loader()
         : SafeArea(
